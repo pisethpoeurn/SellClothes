@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Clothes;
 use Illuminate\Http\Request;
+use App\Models\Clothes;
 
 class ClothesController extends Controller
 {
@@ -15,6 +15,8 @@ class ClothesController extends Controller
     public function index()
     {
         //
+        $clothes = Clothes::all()->toArray();
+        return array_reverse($clothes);
     }
 
     /**
@@ -36,15 +38,25 @@ class ClothesController extends Controller
     public function store(Request $request)
     {
         //
+        $clothes = new Clothes([
+            'name' => $request->input('name'),
+            'picture' => $request->input('picture'),
+            'price' => $request->input('price'),
+            'description' => $request->input('description')
+        ]);
+        $clothes->save();
+
+        /// return message
+        return response()->json('The Clothes was created');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Clothes  $clothes
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Clothes $clothes)
+    public function show($id)
     {
         //
     }
@@ -52,34 +64,42 @@ class ClothesController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Clothes  $clothes
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Clothes $clothes)
+    public function edit($id)
     {
-        //
+        $clothes = Clothes::find($id);
+        return response()->json($clothes);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Clothes  $clothes
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Clothes $clothes)
+    public function update($id, Request $request)
     {
-        //
+        $clothes = Clothes::find($id);
+        $clothes->update($request->all());
+
+        return response()->json('The Clothes was updated');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Clothes  $clothes
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Clothes $clothes)
+    public function destroy($id)
     {
         //
+        $clothes = Clothes::find($id);
+        $clothes->delete();
+
+        return response()->json('The Clothes was deleted');
     }
 }
