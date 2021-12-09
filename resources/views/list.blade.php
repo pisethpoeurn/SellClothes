@@ -9,9 +9,6 @@
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Style -->
 
 </head>
@@ -72,7 +69,20 @@
                 </tr>
             </thead>
             <tbody id="bodyData">
-                
+                <?php foreach ($clothes as $d) : ?>
+                    <tr id="item">
+                        <td>{{ $d->id }}</td>
+                        <td>{{ $d->name }}</td>
+                        <td>{{ $d->picture }}</td>
+                        <td>${{ $d->price }}</td>
+                        <td>{{ $d->description }}</td>
+                        <td>
+                            <a href="javascript:void(0);" data-id="$d->id" id="edit_form" data-action="edit" class=""> <i class="material-icons text-primary">edit</i></a>
+                            <!-- <a href="javascript:void(0);" onclick="update('{{$d->id}}')" id="edit_form" data-id="{{ $d->id }}"> <i class="material-icons text-primary">edit</i></a> -->
+                            <a href="javascript:void(0);" onclick="deleteProduct('{{$d->id}}')" class=""><i class="material-icons text-danger">delete</i> </a>
+                        </td>
+                    </tr>
+                <?php endforeach ?>
             </tbody>
         </table>
     </div>
@@ -91,27 +101,29 @@
                 <div class="modal-body">
                     <!-- <div class="alert alert-success" style="display:none"></div> -->
                     <form id="myForm">
+                        <?php foreach ($clothes as $d) : ?>
                             <div class="form-group">
-                                <input type="hidden" name="clothes" id="clothes_id" >
+                                <input type="hidden" name="clothes" id="clothes_id" value="{{$d->id}}">
                             </div>
                             <div class="form-group">
                                 <label for="name">Name:</label>
-                                <input type="text" class="form-control" id="name" >
+                                <input type="text" class="form-control" id="name" value="{{$d->name}}">
                             </div>
                             <div class="form-group">
                                 <label for="picture">Picture:</label>
-                                <input type="text" class="form-control" id="picture" >
+                                <input type="text" class="form-control" id="picture" value="{{$d->picture}}">
                             </div>
                             <div class="form-group">
                                 <label for="price">Price:</label>
-                                <input type="text" class="form-control" id="price" >
+                                <input type="text" class="form-control" id="price" value="{{$d->price}}">
                             </div>
                             <div class="form-group">
                                 <label for="description">Description:</label>
-                                <input type="text" class="form-control" id="description" >
+                                <input type="text" class="form-control" id="description" value="{{$d->description}}">
                             </div>
                             <button class="btn btn-primary" id="submit">Submit</button>
                             <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <?php endforeach ?>
                     </form>
                 </div>
             </div>
@@ -120,34 +132,62 @@
     <!-- end form edit  -->
 
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
-    var $clothes = {};
-    $(document).ready(function() {
-        $.ajax({
-        url: "http://localhost:8000/api/clothes",
-        type: 'get',
-        // data: JSON.stringify(formData),
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader("Accept", "application/json");
-            xhr.setRequestHeader("Content-Type", "application/json");
-            // xhr.setRequestHeader("Authorization", "Basic QVBJX1VTRVI6MTIzNDU2")
-        },
-        success: function(data) {
-            $.each(data, function(item, el) {
-                var htmls = `<tr>
-                <td> + el.id +</td>`+ 
-                <td> + el.name +</td> + 
-                <td> + el.picture +</td>+
-                <td> +"$"+ el.price +</td>+
-                <td> + el.description +</td>+ '</tr>';
-                $('#bodyData').append(htmls);
-            })
-        }
-    })
-    });
+    // $(document).ready(function() {
+    //     $.ajax({
+    //     url: "http://localhost:8000/api/clothes",
+    //     type: 'get',
+    //     // data: JSON.stringify(formData),
+    //     beforeSend: function(xhr) {
+    //         xhr.setRequestHeader("Accept", "application/json");
+    //         xhr.setRequestHeader("Content-Type", "application/json");
+    //         // xhr.setRequestHeader("Authorization", "Basic QVBJX1VTRVI6MTIzNDU2")
+    //     },
+    //     success: function(data) {
+    //         $.each(data, function(item, el) {
+    //             var htmls = `<tr>
+    //             <td> + el.id +</td>`+ 
+    //             <td> + el.name +</td> + 
+    //             <td> + el.picture +</td>+
+    //             <td> +"$"+ el.price +</td>+
+    //             <td> + el.description +</td>+ '</tr>';
+    //             $('#item').append(htmls);
+    //         })
+    //     }
+    // })
+    // });
+    // $(document).ready(function() {
+    //     $.ajax({
+    //         url: 'http://127.0.0.1:8000/api/clothes',
+    //         type: 'GET',
+    //         dataType: 'json',
+    //         success: function(data, textStatus, xhr) {
+    //             // console.log(data);
+    //             var resultData = data;
+    //             var bodyData = '';
+    //             var i = 1;
+    //             $.each(resultData, function(index, row) {
+    //                 var editUrl = url + '/' + row.id + "/edit";
+    //                 bodyData += "<tr>"
+    //                 bodyData += "<td>" + i++ + "</td><td>" + row.name + "</td><td>" + row.picture + "</td><td>" + row.price + "</td>" +
+    //                     "<td>" + row.description + "</td><td><a class='btn btn-primary' href='" + editUrl + "'>Edit</a>" +
+    //                     "<button class='btn btn-danger delete' value='" + row.id + "' style='margin-left:20px;'>Delete</button></td>";
+    //                 bodyData += "</tr>";
+
+    //             })
+    //             $("#bodyData").append(bodyData);
+    //         },
+    //         error: function(xhr, textStatus, errorThrown) {
+    //             console.log('Error in Database');
+    //         }
+    //     });
+    // });
 
     ///add new
-    $(document).ready(function() {
+    jQuery(document).ready(function() {
         $("#addNew").click(function() {
             $("#myModal").modal();
         });

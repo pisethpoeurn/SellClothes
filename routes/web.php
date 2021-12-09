@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('{any}', function () {
-    return view('app');
-})->where('any','.*');
+// Route::get('{any}', function () {
+//     return view('app');
+// })->where('any','.*');
+
+Route::get('list', 'ClothesController@index');
+Route::resource('/clothes','ClothesController');
+Route::get('show-clothes', 'ClothesController@show');

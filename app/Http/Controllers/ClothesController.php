@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Clothes;
+use Symfony\Component\HttpFoundation\Response;
 
 class ClothesController extends Controller
 {
@@ -14,9 +15,14 @@ class ClothesController extends Controller
      */
     public function index()
     {
-        //
-        $clothes = Clothes::all()->toArray();
-        return array_reverse($clothes);
+        $clothes = Clothes::all();
+        // $data = response::json($clothes);
+        return view('list', compact('clothes'));
+        // return $clothes;
+    }
+    public function getClothes(){
+        $clothes = Clothes::get();
+        return json_encode(array('data'=>$clothes));
     }
 
     /**
@@ -46,6 +52,7 @@ class ClothesController extends Controller
         ]);
         $clothes->save();
 
+        // return view('list');
         /// return message
         return response()->json('The Clothes was created');
     }
